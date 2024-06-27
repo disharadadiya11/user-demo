@@ -5,16 +5,44 @@ const JwtService = require("../../common/jwt.service");
 const { User } = require("../../models/user.model");
 const jwtService = new JwtService();
 
+// authentication using jwt token
+// module.exports.authMiddleware = async (req, res, next) => {
+//   try {
+//     let token = await req?.headers?.authorization?.split(" ")[1];
+//     if (!token)
+//       return res.send(
+//         errorResponse(StatusCodes.BAD_REQUEST, true, CONSTANT.PLEASE_LOGIN)
+//       );
+
+//     let { userId, role } = await jwtService.verifyToken(token);
+//     req.user = await User.findOne({ _id: userId, role: role });
+//     if (!req.user) {
+//       return res.send(
+//         errorResponse(StatusCodes.BAD_REQUEST, true, CONSTANT.PLEASE_REGISTER)
+//       );
+//     }
+//     next();
+//   } catch (error) {
+//     console.log(error);
+//     return res.send(
+//       errorResponse(StatusCodes.INTERNAL_SERVER_ERROR, true, error.message)
+//     );
+//   }
+// };
+
+// authentication using session
 module.exports.authMiddleware = async (req, res, next) => {
   try {
-    let token = await req?.headers?.authorization?.split(" ")[1];
-    if (!token)
+    let currentUser = req.session.currentUser;
+    if (!currentUser)
       return res.send(
-        errorResponse(StatusCodes.BAD_REQUEST, true, CONSTANT.TOKEN_EMPTY)
+        errorResponse(StatusCodes.BAD_REQUEST, true, CONSTANT.PLEASE_LOGIN)
       );
 
-    let { userId, role } = await jwtService.verifyToken(token);
-    req.user = await User.findOne({ _id: userId, role: role });
+    req.user = await User.findOne({
+      _id: currentUser.userId,
+      role: currentUser.role,
+    });
     if (!req.user) {
       return res.send(
         errorResponse(StatusCodes.BAD_REQUEST, true, CONSTANT.PLEASE_REGISTER)

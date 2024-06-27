@@ -22,7 +22,7 @@ module.exports.register = {
 module.exports.login = {
   controller: async (req, res, next) => {
     try {
-      let result = await userService.login(req.body);
+      let result = await userService.login(req.body, req.session);
       return res.status(result.statusCode).send(result);
     } catch (error) {
       console.log(error);

@@ -43,7 +43,7 @@ module.exports = class UserService {
   }
 
   //------------------------------------------------ [ login ] ------------------------------------------------
-  async login(body) {
+  async login(body, session) {
     let user = await this.userModel
       .findOne({ email: body.email })
       .select("+password");
@@ -61,14 +61,22 @@ module.exports = class UserService {
         CONSTANT.WRONG_CREDENTIALS
       );
     }
-    let token = await jwtService.generateToken({
+
+    //-------------------------------------------------------- [ using token code part ]
+    // let token = await jwtService.generateToken({
+    //   userId: user._id,
+    //   role: user.role,
+    // });
+    // user = {
+    //   ...user._doc,
+    //   token,
+    //   password: undefined,
+    // };
+
+    //-------------------------------------------------------- [ using session code part ]
+    session.currentUser = {
       userId: user._id,
       role: user.role,
-    });
-    user = {
-      ...user._doc,
-      token,
-      password: undefined,
     };
     return successResponse(StatusCodes.OK, false, CONSTANT.LOGIN_SUCCESS, user);
   }

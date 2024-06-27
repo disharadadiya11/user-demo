@@ -2,8 +2,8 @@ const jwt = require("jsonwebtoken");
 
 module.exports = class JwtService {
   constructor() {
-    this.secret = process.env.SECRET_KEY;
-    this.expire_in = process.env.EXPIRES_IN;
+    this.secret = process.env.JWT_SECRET_KEY;
+    this.expire_in = process.env.JWT_EXPIRES_IN;
   }
 
   //-------------------------------------------------------- [ token ] -----------------------------------------------------------------
